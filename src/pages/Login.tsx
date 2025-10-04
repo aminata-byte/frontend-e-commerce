@@ -8,21 +8,23 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [nom, setNom] = useState("");
+  const [telephone, setTelephone] = useState("");
+  const [adresse, setAdresse] = useState(""); // 🏠 Nouveau champ
   const [role, setRole] = useState("client"); // client ou vendeur
   const navigate = useNavigate();
 
   // 🔹 Simulation de la connexion / inscription
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (!email || !password || (!isLogin && !nom)) {
+    if (!email || !password || (!isLogin && (!nom || !telephone || !adresse))) {
       alert("Veuillez remplir tous les champs !");
       return;
     }
 
     if (isLogin) {
       // Simulation de connexion
-      const user = JSON.parse(localStorage.getItem("user"));
+      const user = JSON.parse(localStorage.getItem("user") || "null");
       if (user && user.email === email && user.password === password) {
         alert("Connexion réussie ✅");
         if (user.role === "vendeur") navigate("/vendeur/dashboard");
@@ -32,13 +34,15 @@ export default function Login() {
       }
     } else {
       // Simulation d’inscription
-      const newUser = { nom, email, password, role };
+      const newUser = { nom, email, telephone, adresse, password, role };
       localStorage.setItem("user", JSON.stringify(newUser));
       alert("Compte créé avec succès 🎉");
       setIsLogin(true);
       setEmail("");
       setPassword("");
       setNom("");
+      setTelephone("");
+      setAdresse("");
     }
   };
 
@@ -48,7 +52,7 @@ export default function Login() {
 
       <div className="min-h-screen flex items-center justify-center mt-24 bg-base-100">
         <div className="card w-full max-w-md bg-base-200 shadow-xl p-6">
-          {/* 🔹 En-tête : boutons de bascule */}
+          {/* 🔹 Onglets connexion / inscription */}
           <div className="tabs tabs-boxed mb-6">
             <button
               className={`tab flex-1 ${isLogin ? "tab-active" : ""}`}
@@ -64,24 +68,59 @@ export default function Login() {
             </button>
           </div>
 
-          {/* 🔹 Formulaire de connexion ou d’inscription */}
+          {/* 🔹 Formulaire */}
           <form onSubmit={handleSubmit} className="space-y-4">
             {!isLogin && (
-              <div>
-                <label className="label">
-                  <span className="label-text">Nom complet</span>
-                </label>
-                <input
-                  type="text"
-                  placeholder="Entrez votre nom"
-                  value={nom}
-                  onChange={(e) => setNom(e.target.value)}
-                  className="input input-bordered w-full"
-                  required
-                />
-              </div>
+              <>
+                {/* Nom complet */}
+                <div>
+                  <label className="label">
+                    <span className="label-text">Nom complet</span>
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="Entrez votre nom complet"
+                    value={nom}
+                    onChange={(e) => setNom(e.target.value)}
+                    className="input input-bordered w-full"
+                    required
+                  />
+                </div>
+
+                {/* Téléphone */}
+                <div>
+                  <label className="label">
+                    <span className="label-text">Téléphone</span>
+                  </label>
+                  <input
+                    type="tel"
+                    placeholder="Ex : +221771234567"
+                    value={telephone}
+                    onChange={(e) => setTelephone(e.target.value)}
+                    className="input input-bordered w-full"
+                    pattern="^\+?[0-9]{8,15}$"
+                    title="Numéro de téléphone valide requis"
+                    required
+                  />
+                </div>
+
+                {/* Adresse */}
+                <div>
+                  <label className="label">
+                    <span className="label-text">Adresse complète</span>
+                  </label>
+                  <textarea
+                    placeholder="Rue, ville, région..."
+                    value={adresse}
+                    onChange={(e) => setAdresse(e.target.value)}
+                    className="textarea textarea-bordered w-full"
+                    required
+                  ></textarea>
+                </div>
+              </>
             )}
 
+            {/* Email */}
             <div>
               <label className="label">
                 <span className="label-text">Adresse email</span>
@@ -96,6 +135,7 @@ export default function Login() {
               />
             </div>
 
+            {/* Mot de passe */}
             <div>
               <label className="label">
                 <span className="label-text">Mot de passe</span>
@@ -110,6 +150,7 @@ export default function Login() {
               />
             </div>
 
+            {/* Rôle */}
             {!isLogin && (
               <div>
                 <label className="label">
@@ -126,10 +167,12 @@ export default function Login() {
               </div>
             )}
 
+            {/* Bouton */}
             <button type="submit" className="btn btn-primary w-full text-white">
               {isLogin ? "Se connecter" : "Créer un compte"}
             </button>
 
+            {/* 🔹 Bascule */}
             <p className="text-center text-sm mt-2">
               {isLogin ? (
                 <>

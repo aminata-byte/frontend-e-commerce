@@ -38,6 +38,9 @@ import PaymentDetailAdmin from "./pages/admin/PaymentDetailAdmin";
 
 import SignalementPaiement from "./pages/vendeur/SignalementPaiement";
 
+import SettingsAdmin from "./pages/admin/SettingsAdmin";
+  import AdminLogin from "./pages/admin/AdminLogin";
+
 
 
 
@@ -93,12 +96,19 @@ createRoot(document.getElementById("root")!).render(
   <Route path="vendeurs" element={<VendorsValidation />} />
   <Route path="paiements" element={<PaymentsAdmin />} />
   <Route path="notifications" element={<NotificationsAdmin />} />
+  <Route path="settings" element={<SettingsAdmin />} />  {/* 👈 ICI À L'INTÉRIEUR */}
+
+
+<Route path="/admin/login" element={<AdminLogin />} />
+
 </Route>
 
 <Route path="/admin/paiement/:id" element={<PaymentDetailAdmin />} />
 
-
 <Route path="/vendeur/signalement" element={<SignalementPaiement />} />
+
+{/* Route 404 - doit être à la fin */}
+<Route path="*" element={<NotFound />} />
 
 
 
